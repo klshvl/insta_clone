@@ -19,18 +19,4 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  comments: {
-    fontSize: 16,
-    marginVertical: 10,
-  },
-  addComment: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  image: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    marginRight: 8,
-  },
 });

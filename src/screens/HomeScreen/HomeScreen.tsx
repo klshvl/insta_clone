@@ -1,10 +1,11 @@
 import React from "react";
 import { View } from "react-native";
 import { FollowingsPosts, Header } from "../../components";
+import { styles } from "./styles";
 
 const HomeScreen = () => {
   return (
-    <View>
+    <View style={styles.container}>
       <Header />
       <FollowingsPosts />
     </View>

@@ -5,11 +5,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Icon } from "react-native-eva-icons";
 import { styles } from "./style";
+import Button from "../Button";
+import { useNavigation } from "@react-navigation/native";
 
 const ARROW_SIZE = 24;
 export const ICONS_SIZE = 32;
 
 const Header = () => {
+  const navigation = useNavigation<any>();
   return (
     <SafeAreaView edges={["top", "left", "right"]} style={styles.rootContainer}>
       <View style={styles.iconsContainer}>
@@ -33,12 +36,14 @@ const Header = () => {
           height={ICONS_SIZE}
           style={styles.icon}
         />
-        <Icon
-          name="message-circle-outline"
-          width={ICONS_SIZE}
-          height={ICONS_SIZE}
-          style={styles.icon}
-        />
+        <Button onPress={() => navigation.navigate("Messages")}>
+          <Icon
+            name="paper-plane-outline"
+            width={ICONS_SIZE}
+            height={ICONS_SIZE}
+            style={styles.icon}
+          />
+        </Button>
       </View>
     </SafeAreaView>
   );

@@ -6,7 +6,7 @@ import { styles as style1 } from "../StoryProfile/styles";
 import { styles as style2 } from "../Post/styles";
 
 interface StoryBorderProps {
-  item: Profile;
+  item: Post;
   styleVariants: "profiles" | "post";
   children: React.ReactNode;
 }

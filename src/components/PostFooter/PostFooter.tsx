@@ -1,34 +1,37 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Image, ImageSourcePropType, Text, View } from "react-native";
+import { View } from "react-native";
 import { Icon } from "react-native-eva-icons";
-
-import { styles } from "./styles";
-import { ICONS_SIZE } from "../Header/Header";
-import {
-  Gesture,
-  GestureDetector,
-  TextInput,
-} from "react-native-gesture-handler";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { useUsersContext } from "../../context/users-context";
+import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+
+import { styles } from "./styles";
+import { ICONS_SIZE } from "../Header/Header";
 import LikersProfileImages from "./LikersProfileImages";
 import LikesText from "./LikesText";
+import AddComment from "./AddComment";
+import Button from "../Button";
+import { Source } from "react-native-fast-image";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
 interface PostFooterProps {
   isLiked: boolean;
   onLiked: (a: boolean) => void;
-  user: Profile;
+  post: Post;
+  onFocus: () => void;
 }
 
-const PostFooter = ({ isLiked, onLiked, user }: PostFooterProps) => {
-  const usersData = useUsersContext();
+const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
+  const { posts } = useSelector(state => state.posts);
+
+  const navigation = useNavigation<any>();
 
   const [usersThatLiked, setUsersThatLiked] = useState<
     Array<string | undefined>
@@ -56,21 +59,52 @@ const PostFooter = ({ isLiked, onLiked, user }: PostFooterProps) => {
     });
   });
 
+  // const postLikes = useCallback(() => {
+  //   let likes: Array<string | undefined> = [];
+
+  //   post.likedBy.forEach(postId => {
+  //     likes.push(posts.find((post: Post) => post.id === postId)?.username);
+  //   });
+  //   setUsersThatLiked(likes);
+  // }, [post.likedBy, posts]);
+
+  // const postLikesUsers = useCallback(
+  //   (usernames: Array<string | undefined>) => {
+  //     const userImages: Array<number | Source | undefined> = [];
+  //     usernames.map(username => {
+  //       userImages.push(
+  //         posts.find((post: Post) => post.username === username)?.image,
+  //       );
+  //     });
+
+  //     return userImages.slice(0, 3).map((userImage, index) => {
+  //       return (
+  //         <LikersProfileImages
+  //           key={index + Math.random()}
+  //           imgSource={userImage}
+  //           index={index}
+  //         />
+  //       );
+  //     });
+  //   },
+  //   [posts],
+  // );
+
   const postLikes = useCallback(() => {
     let likes: Array<string | undefined> = [];
 
-    user.likedBy.forEach(userId => {
-      likes.push(usersData.find(userData => userData.id === userId)?.username);
+    post.likedBy.forEach(postId => {
+      likes.push(posts.find((post: Post) => post.id === postId)?.username);
     });
     setUsersThatLiked(likes);
-  }, [user.likedBy, usersData]);
+  }, [post.likedBy, posts]);
 
   const postLikesUsers = useCallback(
     (usernames: Array<string | undefined>) => {
-      const userImages: ImageSourcePropType = [];
+      const userImages: Array<number | Source | undefined> = [];
       usernames.map(username => {
         userImages.push(
-          usersData.find(userData => userData.username === username)?.image,
+          posts.find((post: Post) => post.username === username)?.image,
         );
       });
 
@@ -84,7 +118,7 @@ const PostFooter = ({ isLiked, onLiked, user }: PostFooterProps) => {
         );
       });
     },
-    [usersData],
+    [posts],
   );
 
   useEffect(() => {
@@ -113,12 +147,15 @@ const PostFooter = ({ isLiked, onLiked, user }: PostFooterProps) => {
               />
             )}
           </GestureDetector>
-          <Icon
-            style={styles.icon}
-            name="message-circle-outline"
-            width={ICONS_SIZE}
-            height={ICONS_SIZE}
-          />
+          <Button
+            onPress={() => navigation.navigate("Comments", post.comments)}>
+            <Icon
+              style={styles.icon}
+              name="message-circle-outline"
+              width={ICONS_SIZE}
+              height={ICONS_SIZE}
+            />
+          </Button>
           <Icon
             style={styles.icon}
             name="paper-plane-outline"
@@ -132,12 +169,7 @@ const PostFooter = ({ isLiked, onLiked, user }: PostFooterProps) => {
         {postLikesUsers(usersThatLiked)}
         <LikesText likeNum={2} usersThatLiked={usersThatLiked} />
       </View>
-
-      <Text style={styles.comments}>View all 5 comments</Text>
-      <View style={styles.addComment}>
-        <Image source={usersData[0].image} style={styles.image} />
-        <TextInput placeholder="Add a comment..." />
-      </View>
+      <AddComment post={post} commentImage={posts[0].image} onFocus={onFocus} />
     </View>
   );
 };

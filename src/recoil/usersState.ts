@@ -1,10 +1,8 @@
-import React, { useContext } from "react";
-import { createContext } from "react";
+import { atom } from "recoil";
 
-const Context = createContext<Post[]>([]);
-
-export const UsersContext = ({ children }: ContextProps) => {
-  const value: Post[] = [
+export const usersState = atom<Post[]>({
+  key: "usersState",
+  default: [
     {
       id: 1,
       image: require("../../assets/images/WillVandom.jpg"),
@@ -35,14 +33,5 @@ export const UsersContext = ({ children }: ContextProps) => {
       username: "hay_lin",
       likedBy: [1, 3, 4],
     },
-  ];
-  return <Context.Provider value={value}>{children}</Context.Provider>;
-};
-
-export const useUsersContext = () => {
-  const context = useContext(Context);
-
-  if (context === undefined) throw new Error("Hook is used without a Provider");
-
-  return context;
-};
+  ],
+});

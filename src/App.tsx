@@ -1,20 +1,36 @@
 import React from "react";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  DefaultTheme,
+  NavigationContainer,
+  Theme,
+} from "@react-navigation/native";
 
-import { HomeScreen } from "./screens";
 import { StyleSheet } from "react-native";
-import { UsersContext } from "./context/users-context";
+import TabNavigation from "./navigation/TabNavigation";
+import { Provider } from "react-redux";
+import store from "./store";
+
+const theme: Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: "white",
+  },
+};
 
 const App = () => {
   return (
-    <SafeAreaProvider>
-      <GestureHandlerRootView style={styles.root}>
-        <UsersContext>
-          <HomeScreen />
-        </UsersContext>
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+    <GestureHandlerRootView style={styles.root}>
+      <SafeAreaProvider>
+        <Provider store={store}>
+          <NavigationContainer theme={theme}>
+            <TabNavigation />
+          </NavigationContainer>
+        </Provider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 };
 

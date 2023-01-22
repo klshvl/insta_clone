@@ -1,8 +1,9 @@
 import React from "react";
-import { Image, ImageSourcePropType, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import Image, { Source } from "react-native-fast-image";
 
 interface Props {
-  imgSource: ImageSourcePropType;
+  imgSource: number | Source | undefined;
   index: number;
 }
 

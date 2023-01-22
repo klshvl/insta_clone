@@ -6,7 +6,7 @@ import { styles } from "./styles";
 import { Icon } from "react-native-eva-icons";
 
 interface StoryProfileProps {
-  item: Profile;
+  item: Post;
 }
 
 const StoryProfile = ({ item }: StoryProfileProps) => {

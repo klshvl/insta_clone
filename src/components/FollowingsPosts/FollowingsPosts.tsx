@@ -1,27 +1,83 @@
-import React from "react";
-import { FlatList } from "react-native";
+import React, { useCallback, useRef, useState } from "react";
+import { Platform, View } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { useSelector } from "react-redux";
 
 import Post from "../Post";
 import StoryProfiles from "../StoryProfiles";
-import { useUsersContext } from "../../context/users-context";
-import { styles } from "./styles";
+import { useKeyboard } from "./useKeyboard";
 
 const FollowingsPosts = () => {
-  const usersData = useUsersContext();
+  const [selectedIndex, setSelectedIndex] = useState<number>();
+  const [viewHeight, setViewHeight] = useState<number>();
+  const { keyboardHeight } = useKeyboard();
+  const postRef = useRef<FlashList<Post>>(null);
 
-  const postsHandler = ({ item }: { item: Profile }) => {
-    return <Post userData={item} />;
+  const { posts } = useSelector(state => state.posts);
+
+  const onFocus = useCallback((index: number) => {
+    // let ke = keyboardHeight;
+    // ke ||= 346;
+    if (Platform.OS === "ios") {
+      // postRef.current?.scrollToOffset({
+      //   offset:
+      //     postRef.current?.state.layoutProvider
+      //       .getLayoutManager()
+      //       ?.getOffsetForIndex(index).y! +
+      //     630 -
+      //     ke,
+      //   animated: true,
+      // });
+
+      setSelectedIndex(index);
+    }
+  }, []);
+
+  const postsHandler = ({ item, index }: { item: Post; index: number }) => {
+    return <Post post={item} onFocus={() => onFocus(index)} />;
   };
 
   return (
-    <FlatList
-      ListHeaderComponent={<StoryProfiles data={usersData} />}
-      data={usersData}
-      renderItem={postsHandler}
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.contentContainerStyle}
-    />
+    <View
+      style={[
+        getStyles().contentContainerStyle,
+        getStyles(keyboardHeight).keyboard,
+      ]}
+      onLayout={e => {
+        if (!viewHeight || e.nativeEvent.layout.height > viewHeight) {
+          setViewHeight(e.nativeEvent.layout.height);
+          return;
+        }
+        if (selectedIndex !== undefined) {
+          postRef.current?.scrollToIndex({
+            index: selectedIndex,
+            animated: true,
+            viewPosition: 1,
+          });
+        }
+      }}>
+      <FlashList
+        ref={postRef}
+        ListHeaderComponent={<StoryProfiles posts={posts} />}
+        data={posts}
+        renderItem={postsHandler}
+        estimatedItemSize={630}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
   );
 };
 
 export default FollowingsPosts;
+
+import { StyleSheet } from "react-native";
+
+const getStyles = (keyboardHeight?: number) =>
+  StyleSheet.create({
+    contentContainerStyle: {
+      flex: 1,
+    },
+    keyboard: {
+      marginBottom: keyboardHeight ? keyboardHeight - 80 : 0,
+    },
+  });

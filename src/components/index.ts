@@ -1,3 +1,4 @@
+export { default as Button } from "./Button";
 export { default as FollowingsPosts } from "./FollowingsPosts";
 export { default as Header } from "./Header";
 export { default as ItemSeparator } from "./ItemSeparator";

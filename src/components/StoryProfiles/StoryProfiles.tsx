@@ -1,23 +1,24 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 import StoryProfile from "../StoryProfile";
 import ItemSeparator from "../ItemSeparator";
 
 interface StoryProfilesProps {
-  data: Profile[];
+  posts: Post[];
 }
 
-const StoryProfiles = ({ data }: StoryProfilesProps) => {
-  const storyProfilesHandler = ({ item }: { item: Profile }) => {
+const StoryProfiles = ({ posts }: StoryProfilesProps) => {
+  const storyProfilesHandler = ({ item }: { item: Post }) => {
     return <StoryProfile item={item} />;
   };
 
   return (
     <>
-      <FlatList
-        data={data}
+      <FlashList
+        data={posts}
         keyExtractor={item => item.id.toString()}
         renderItem={storyProfilesHandler}
+        estimatedItemSize={200}
         horizontal
         showsHorizontalScrollIndicator={false}
       />

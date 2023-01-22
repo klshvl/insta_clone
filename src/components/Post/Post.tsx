@@ -17,10 +17,11 @@ import StoryBorder from "../StoryBorder";
 import { styles } from "./styles";
 
 interface PostsProps {
-  userData: Profile;
+  post: Post;
+  onFocus: () => void;
 }
 
-const Post = ({ userData }: PostsProps) => {
+const Post = ({ post, onFocus }: PostsProps) => {
   const [isLiked, setIsLiked] = useState(false);
 
   const scale = useSharedValue(0);
@@ -53,8 +54,8 @@ const Post = ({ userData }: PostsProps) => {
   return (
     <View style={styles.postContainer}>
       <View style={styles.postHeader}>
-        <StoryBorder item={userData} styleVariants="post">
-          <Image source={userData.image} style={styles.profile} />
+        <StoryBorder item={post} styleVariants="post">
+          <Image source={post.image} style={styles.profile} />
         </StoryBorder>
         <Icon
           name="more-horizontal-outline"
@@ -64,7 +65,7 @@ const Post = ({ userData }: PostsProps) => {
       </View>
       <GestureDetector gesture={doubleTap}>
         <View>
-          <ImageBackground source={userData.image} style={[styles.postImage]}>
+          <ImageBackground source={post.image} style={[styles.postImage]}>
             <Animated.Image
               source={require("../../../assets/images/whiteHeart.png")}
               style={[styles.heartImage, rImageStyle]}
@@ -73,7 +74,12 @@ const Post = ({ userData }: PostsProps) => {
           </ImageBackground>
         </View>
       </GestureDetector>
-      <PostFooter isLiked={isLiked} onLiked={setIsLiked} user={userData} />
+      <PostFooter
+        onFocus={onFocus}
+        isLiked={isLiked}
+        onLiked={setIsLiked}
+        post={post}
+      />
     </View>
   );
 };
