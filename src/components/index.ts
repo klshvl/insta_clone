@@ -1,3 +1,4 @@
+export { default as AccountMenu } from "./AccountMenu";
 export { default as Button } from "./Button";
 export { default as FollowingsPosts } from "./FollowingsPosts";
 export { default as Header } from "./Header";

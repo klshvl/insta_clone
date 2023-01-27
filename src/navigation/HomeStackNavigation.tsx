@@ -4,8 +4,9 @@ import { CommentsScreen, HomeScreen, MessagesScreen } from "../screens";
 import { Icon } from "react-native-eva-icons";
 
 export type RootStackParamsList = {
-  HomeStack: undefined;
-  Comments: string[];
+  Home: undefined;
+  // Comments: string[];
+  Comments: Post;
   Messages: undefined;
 };
 
@@ -15,7 +16,7 @@ const HomeStackNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="HomeStack"
+        name="Home"
         component={HomeScreen}
         options={{ headerShown: false }}
       />

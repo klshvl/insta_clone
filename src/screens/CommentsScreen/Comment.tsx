@@ -9,20 +9,29 @@ import Animated, {
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Image, { Source } from "react-native-fast-image";
+import Swipeable from "react-native-gesture-handler/Swipeable";
+import DeleteComments from "./DeleteComments";
+import { deleteComment } from "../../store/posts";
+import { useAppDispatch } from "../../hooks";
 
 interface CommentProps {
-  comment: string;
+  // comment: string;
+  comments: AddCommentsState;
   accountUsername: string;
   accountUserImage: number | Source | undefined;
+  post: Post;
 }
 
 const Comment = ({
-  comment,
+  comments,
   accountUsername,
   accountUserImage,
+  post,
 }: CommentProps) => {
   const scale = useSharedValue(1);
   const [liked, setLiked] = useState<boolean>(false);
+
+  const dispatch = useAppDispatch();
 
   const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
@@ -47,38 +56,48 @@ const Comment = ({
     });
   });
 
+  const deleteComments = () => {
+    dispatch(deleteComment(post.id, comments.id));
+  };
+
+  const renderRightActions = () => {
+    return <DeleteComments onPress={deleteComments} />;
+  };
+
   return (
-    <View key={Math.random()} style={styles.container}>
-      <View style={styles.info}>
-        <Image source={accountUserImage} style={styles.profileImg} />
-        <View>
-          <Text style={styles.username}>{accountUsername}</Text>
-          <View style={styles.time}>
-            <Text>2h</Text>
-            <Text style={styles.reply}>Reply</Text>
+    <Swipeable renderRightActions={renderRightActions}>
+      <View key={Math.random()} style={styles.container}>
+        <View style={styles.info}>
+          <Image source={accountUserImage} style={styles.profileImg} />
+          <View>
+            <Text style={styles.username}>{accountUsername}</Text>
+            <View style={styles.time}>
+              <Text>2h</Text>
+              <Text style={styles.reply}>Reply</Text>
+            </View>
           </View>
+          <Text style={styles.comment}>{comments.addComment}</Text>
         </View>
-        <Text style={styles.comment}>{comment}</Text>
+        <GestureDetector gesture={tapHandler}>
+          {liked ? (
+            <AnimatedIcon
+              name="heart"
+              width={16}
+              height={16}
+              fill={"red"}
+              style={[styles.icon, rIconStyle]}
+            />
+          ) : (
+            <AnimatedIcon
+              name="heart-outline"
+              width={16}
+              height={16}
+              style={[styles.icon, rIconStyle]}
+            />
+          )}
+        </GestureDetector>
       </View>
-      <GestureDetector gesture={tapHandler}>
-        {liked ? (
-          <AnimatedIcon
-            name="heart"
-            width={16}
-            height={16}
-            fill={"red"}
-            style={[styles.icon, rIconStyle]}
-          />
-        ) : (
-          <AnimatedIcon
-            name="heart-outline"
-            width={16}
-            height={16}
-            style={[styles.icon, rIconStyle]}
-          />
-        )}
-      </GestureDetector>
-    </View>
+    </Swipeable>
   );
 };
 
@@ -89,7 +108,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    paddingVertical: 20,
   },
   info: {
     flexDirection: "row",
@@ -98,7 +117,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    marginRight: 8,
+    marginHorizontal: 10,
   },
   username: {
     fontWeight: "bold",
@@ -114,6 +133,6 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   icon: {
-    marginRight: 12,
+    marginRight: 22,
   },
 });

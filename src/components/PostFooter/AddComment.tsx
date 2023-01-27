@@ -7,11 +7,10 @@ import {
   View,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-// import { useRecoilState } from "recoil";
 
 import Button from "../Button/Button";
-import { useDispatch } from "react-redux";
-import { addComment } from "../../store";
+import { addComment } from "../../store/posts";
+import { useAppDispatch } from "../../hooks";
 
 interface AddCommentProps {
   post: Post;
@@ -20,23 +19,28 @@ interface AddCommentProps {
 }
 
 const AddComment = ({ commentImage, onFocus, post }: AddCommentProps) => {
-  const [addComments, setAddComments] = useState<string | undefined>("");
+  // const [addComments, setAddComments] = useState<string | undefined>("");
+  const [addComments, setAddComments] = useState<AddCommentsState>({
+    id: Math.random(),
+    addComment: "",
+  });
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const navigation = useNavigation<any>();
 
   const commentsHandler = () => {
-    navigation.navigate("Comments", post.comments);
+    navigation.navigate("Comments", post);
   };
 
   const addCommentsHandler = () => {
-    if (addComments === "") return;
+    if (addComments.addComment === "") return;
     dispatch(addComment(post.id, addComments));
-    setAddComments("");
+    setAddComments({ id: Math.random(), addComment: "" });
   };
 
-  const onChangeText = (newComment: string) => setAddComments(newComment);
+  const onChangeText = (newComment: string) =>
+    setAddComments({ id: Math.random(), addComment: newComment });
 
   return (
     <>
@@ -58,7 +62,7 @@ const AddComment = ({ commentImage, onFocus, post }: AddCommentProps) => {
           <TextInput
             onFocus={onFocus}
             placeholder="Add a comment..."
-            defaultValue={addComments}
+            defaultValue={addComments.addComment}
             onChangeText={onChangeText}
           />
           <Button textStyle={styles.postComment} onPress={addCommentsHandler}>

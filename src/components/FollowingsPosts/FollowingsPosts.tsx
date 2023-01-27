@@ -13,9 +13,11 @@ const FollowingsPosts = () => {
   const { keyboardHeight } = useKeyboard();
   const postRef = useRef<FlashList<Post>>(null);
 
-  const { posts } = useSelector(state => state.posts);
+  const { posts } = useSelector(
+    (state: { posts: InitialState }) => state.posts,
+  );
 
-  const onFocus = useCallback((index: number) => {
+  const onFocus = useCallback((id: number) => {
     // let ke = keyboardHeight;
     // ke ||= 346;
     if (Platform.OS === "ios") {
@@ -29,12 +31,14 @@ const FollowingsPosts = () => {
       //   animated: true,
       // });
 
-      setSelectedIndex(index);
+      setSelectedIndex(id);
     }
   }, []);
 
-  const postsHandler = ({ item, index }: { item: Post; index: number }) => {
-    return <Post post={item} onFocus={() => onFocus(index)} />;
+  const postsHandler = ({ item }: { item: Post }) => {
+    return (
+      <Post post={item} onFocus={() => posts.map(post => onFocus(post.id))} />
+    );
   };
 
   return (
@@ -71,6 +75,7 @@ const FollowingsPosts = () => {
 export default FollowingsPosts;
 
 import { StyleSheet } from "react-native";
+import { InitialState } from "../../store/posts";
 
 const getStyles = (keyboardHeight?: number) =>
   StyleSheet.create({

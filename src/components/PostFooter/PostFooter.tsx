@@ -9,7 +9,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { styles } from "./styles";
 import { ICONS_SIZE } from "../Header/Header";
@@ -18,6 +18,11 @@ import LikesText from "./LikesText";
 import AddComment from "./AddComment";
 import Button from "../Button";
 import { Source } from "react-native-fast-image";
+import { InitialState } from "../../store/posts";
+import {
+  SavedPostsInitialState,
+  removeSavedPost,
+} from "../../store/savedPosts";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
@@ -29,7 +34,15 @@ interface PostFooterProps {
 }
 
 const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
-  const { posts } = useSelector(state => state.posts);
+  const { posts } = useSelector(
+    (state: { posts: InitialState }) => state.posts,
+  );
+
+  const { savedPostsIds } = useSelector(
+    (state: { savedPosts: SavedPostsInitialState }) => state.savedPosts,
+  );
+
+  const dispatch = useDispatch();
 
   const navigation = useNavigation<any>();
 
@@ -59,42 +72,11 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
     });
   });
 
-  // const postLikes = useCallback(() => {
-  //   let likes: Array<string | undefined> = [];
-
-  //   post.likedBy.forEach(postId => {
-  //     likes.push(posts.find((post: Post) => post.id === postId)?.username);
-  //   });
-  //   setUsersThatLiked(likes);
-  // }, [post.likedBy, posts]);
-
-  // const postLikesUsers = useCallback(
-  //   (usernames: Array<string | undefined>) => {
-  //     const userImages: Array<number | Source | undefined> = [];
-  //     usernames.map(username => {
-  //       userImages.push(
-  //         posts.find((post: Post) => post.username === username)?.image,
-  //       );
-  //     });
-
-  //     return userImages.slice(0, 3).map((userImage, index) => {
-  //       return (
-  //         <LikersProfileImages
-  //           key={index + Math.random()}
-  //           imgSource={userImage}
-  //           index={index}
-  //         />
-  //       );
-  //     });
-  //   },
-  //   [posts],
-  // );
-
   const postLikes = useCallback(() => {
     let likes: Array<string | undefined> = [];
 
     post.likedBy.forEach(postId => {
-      likes.push(posts.find((post: Post) => post.id === postId)?.username);
+      likes.push(posts.find((postU: Post) => postU.id === postId)?.username);
     });
     setUsersThatLiked(likes);
   }, [post.likedBy, posts]);
@@ -104,7 +86,7 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
       const userImages: Array<number | Source | undefined> = [];
       usernames.map(username => {
         userImages.push(
-          posts.find((post: Post) => post.username === username)?.image,
+          posts.find((postI: Post) => postI.username === username)?.image,
         );
       });
 
@@ -124,6 +106,15 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
   useEffect(() => {
     postLikes();
   }, [postLikes]);
+
+  const savePostHandler = () => {
+    if (!savedPostsIds.includes(post.id)) {
+      dispatch({ type: "save", payload: post.id });
+    } else {
+      dispatch(removeSavedPost(post.id));
+    }
+  };
+  const postSaved = savedPostsIds.find(id => id === post.id);
 
   return (
     <View style={styles.postInteractionContainer}>
@@ -147,8 +138,7 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
               />
             )}
           </GestureDetector>
-          <Button
-            onPress={() => navigation.navigate("Comments", post.comments)}>
+          <Button onPress={() => navigation.navigate("Comments", post)}>
             <Icon
               style={styles.icon}
               name="message-circle-outline"
@@ -163,13 +153,29 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
             height={ICONS_SIZE}
           />
         </View>
-        <Icon name="bookmark-outline" width={ICONS_SIZE} height={ICONS_SIZE} />
+        <Button onPress={savePostHandler}>
+          {postSaved ? (
+            <Icon name="bookmark" width={ICONS_SIZE} height={ICONS_SIZE} />
+          ) : (
+            <Icon
+              name="bookmark-outline"
+              width={ICONS_SIZE}
+              height={ICONS_SIZE}
+            />
+          )}
+        </Button>
       </View>
       <View style={styles.likes}>
         {postLikesUsers(usersThatLiked)}
         <LikesText likeNum={2} usersThatLiked={usersThatLiked} />
       </View>
-      <AddComment post={post} commentImage={posts[0].image} onFocus={onFocus} />
+      {
+        <AddComment
+          post={post}
+          commentImage={posts[0].image}
+          onFocus={onFocus}
+        />
+      }
     </View>
   );
 };

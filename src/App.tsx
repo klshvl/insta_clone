@@ -10,7 +10,7 @@ import {
 import { StyleSheet } from "react-native";
 import TabNavigation from "./navigation/TabNavigation";
 import { Provider } from "react-redux";
-import store from "./store";
+import store from "./store/posts";
 
 const theme: Theme = {
   ...DefaultTheme,

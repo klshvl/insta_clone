@@ -3,22 +3,18 @@ import {
   BottomTabNavigationOptions,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import {
-  AccountScreen,
-  ReelsScreen,
-  SearchScreen,
-  ShopScreen,
-} from "../screens";
+import { ReelsScreen, SearchScreen, ShopScreen } from "../screens";
 import { Icon } from "react-native-eva-icons";
 import { RouteProp } from "@react-navigation/native";
 import HomeStackNavigation from "./HomeStackNavigation";
+import AccountStackNavigation from "./AccountStackNavigation";
 
 type RootTabParamList = {
-  Home: undefined;
+  HomeStack: undefined;
   Search: undefined;
   Reels: undefined;
   Shop: undefined;
-  Account: undefined;
+  AccountStack: undefined;
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
@@ -38,7 +34,7 @@ const TabNavigation = () => {
         tabBarShowLabel: false,
         tabBarIcon: ({ color }) => {
           switch (route.name) {
-            case "Home":
+            case "HomeStack":
               return (
                 <Icon
                   name="home-outline"
@@ -74,7 +70,7 @@ const TabNavigation = () => {
                   height={TAB_ICON_SIZE}
                 />
               );
-            case "Account":
+            case "AccountStack":
               return (
                 <Icon
                   name="person-outline"
@@ -92,11 +88,11 @@ const TabNavigation = () => {
 
   return (
     <Tab.Navigator screenOptions={screenOptions}>
-      <Tab.Screen name="Home" component={HomeStackNavigation} />
+      <Tab.Screen name="HomeStack" component={HomeStackNavigation} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Reels" component={ReelsScreen} />
       <Tab.Screen name="Shop" component={ShopScreen} />
-      <Tab.Screen name="Account" component={AccountScreen} />
+      <Tab.Screen name="AccountStack" component={AccountStackNavigation} />
     </Tab.Navigator>
   );
 };
