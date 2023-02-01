@@ -4,10 +4,17 @@ import {
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
 import { ReelsScreen, SearchScreen, ShopScreen } from "../screens";
-import { Icon } from "react-native-eva-icons";
+// import { Icon } from "react-native-eva-icons";
 import { RouteProp } from "@react-navigation/native";
 import HomeStackNavigation from "./HomeStackNavigation";
 import AccountStackNavigation from "./AccountStackNavigation";
+import HomeLogo from "../../assets/icons/HomeLogo";
+import {
+  AccountLogo,
+  ReelsLogo,
+  SearchLogo,
+  ShopLogo,
+} from "../../assets/icons";
 
 type RootTabParamList = {
   HomeStack: undefined;
@@ -18,7 +25,7 @@ type RootTabParamList = {
 };
 
 const Tab = createBottomTabNavigator<RootTabParamList>();
-const TAB_ICON_SIZE = 32;
+// const TAB_ICON_SIZE = 32;
 
 const TabNavigation = () => {
   const screenOptions = useCallback(
@@ -32,52 +39,57 @@ const TabNavigation = () => {
         tabBarStyle: { position: "relative" },
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarIcon: ({ color }) => {
+        tabBarIcon: ({ focused }) => {
           switch (route.name) {
             case "HomeStack":
               return (
-                <Icon
-                  name="home-outline"
-                  color={color}
-                  width={TAB_ICON_SIZE}
-                  height={TAB_ICON_SIZE}
-                />
+                // <Icon
+                //   name="home-outline"
+                //   color={color}
+                //   width={TAB_ICON_SIZE}
+                //   height={TAB_ICON_SIZE}
+                // />
+                <HomeLogo focused={focused} />
               );
             case "Search":
               return (
-                <Icon
-                  name="search-outline"
-                  color={color}
-                  width={TAB_ICON_SIZE}
-                  height={TAB_ICON_SIZE}
-                />
+                // <Icon
+                //   name="search-outline"
+                //   color={color}
+                //   width={TAB_ICON_SIZE}
+                //   height={TAB_ICON_SIZE}
+                // />
+                <SearchLogo focused={focused} />
               );
             case "Reels":
               return (
-                <Icon
-                  name="film-outline"
-                  color={color}
-                  width={TAB_ICON_SIZE}
-                  height={TAB_ICON_SIZE}
-                />
+                // <Icon
+                //   name="film-outline"
+                //   color={color}
+                //   width={TAB_ICON_SIZE}
+                //   height={TAB_ICON_SIZE}
+                // />
+                <ReelsLogo focused={focused} />
               );
             case "Shop":
               return (
-                <Icon
-                  name="shopping-bag-outline"
-                  color={color}
-                  width={TAB_ICON_SIZE}
-                  height={TAB_ICON_SIZE}
-                />
+                // <Icon
+                //   name="shopping-bag-outline"
+                //   color={color}
+                //   width={TAB_ICON_SIZE}
+                //   height={TAB_ICON_SIZE}
+                // />
+                <ShopLogo focused={focused} />
               );
             case "AccountStack":
               return (
-                <Icon
-                  name="person-outline"
-                  color={color}
-                  width={TAB_ICON_SIZE}
-                  height={TAB_ICON_SIZE}
-                />
+                // <Icon
+                //   name="person-outline"
+                //   color={color}
+                //   width={TAB_ICON_SIZE}
+                //   height={TAB_ICON_SIZE}
+                // />
+                <AccountLogo focused={focused} />
               );
           }
         },

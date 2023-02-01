@@ -169,13 +169,7 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
         {postLikesUsers(usersThatLiked)}
         <LikesText likeNum={2} usersThatLiked={usersThatLiked} />
       </View>
-      {
-        <AddComment
-          post={post}
-          commentImage={posts[0].image}
-          onFocus={onFocus}
-        />
-      }
+      <AddComment post={post} commentImage={posts[0].image} onFocus={onFocus} />
     </View>
   );
 };

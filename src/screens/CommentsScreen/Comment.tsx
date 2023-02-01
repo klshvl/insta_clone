@@ -11,7 +11,8 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Image, { Source } from "react-native-fast-image";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import DeleteComments from "./DeleteComments";
-import { deleteComment } from "../../store/posts";
+
+import { deleteComment, likeComment } from "../../store/posts";
 import { useAppDispatch } from "../../hooks";
 
 interface CommentProps {
@@ -19,17 +20,17 @@ interface CommentProps {
   comments: AddCommentsState;
   accountUsername: string;
   accountUserImage: number | Source | undefined;
-  post: Post;
+  postId: number;
 }
 
 const Comment = ({
   comments,
   accountUsername,
   accountUserImage,
-  post,
+  postId,
 }: CommentProps) => {
   const scale = useSharedValue(1);
-  const [liked, setLiked] = useState<boolean>(false);
+  // const [liked, setLiked] = useState<boolean>(false);
 
   const dispatch = useAppDispatch();
 
@@ -46,7 +47,7 @@ const Comment = ({
   });
 
   const commentWasLiked = () => {
-    setLiked(!liked);
+    dispatch(likeComment(postId, comments.id));
   };
 
   const tapHandler = Gesture.Tap().onStart(() => {
@@ -57,7 +58,7 @@ const Comment = ({
   });
 
   const deleteComments = () => {
-    dispatch(deleteComment(post.id, comments.id));
+    dispatch(deleteComment(postId, comments.id));
   };
 
   const renderRightActions = () => {
@@ -76,10 +77,10 @@ const Comment = ({
               <Text style={styles.reply}>Reply</Text>
             </View>
           </View>
-          <Text style={styles.comment}>{comments.addComment}</Text>
+          <Text style={styles.comment}>{comments?.addComment}</Text>
         </View>
         <GestureDetector gesture={tapHandler}>
-          {liked ? (
+          {comments?.isLiked ? (
             <AnimatedIcon
               name="heart"
               width={16}

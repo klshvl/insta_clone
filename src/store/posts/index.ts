@@ -36,14 +36,42 @@ const initialState: InitialState = {
       id: 4,
       image: require("../../../assets/images/CorneliaHale.jpg"),
       username: "cornelia_hale",
-      likedBy: [2, 3, 5],
+      likedBy: [6, 2, 3, 5],
       comments: [],
     },
     {
       id: 5,
       image: require("../../../assets/images/HayLin.png"),
       username: "hay_lin",
-      likedBy: [1, 3, 4],
+      likedBy: [9, 3, 4],
+      comments: [],
+    },
+    {
+      id: 6,
+      image: require("../../../assets/images/caleb.png"),
+      username: "caleb__",
+      likedBy: [4, 9],
+      comments: [],
+    },
+    {
+      id: 7,
+      image: require("../../../assets/images/MattOlsen.jpg"),
+      username: "matt_olsen",
+      likedBy: [1, 8],
+      comments: [],
+    },
+    {
+      id: 8,
+      image: require("../../../assets/images/elyon.jpg"),
+      username: "elyon_brown",
+      likedBy: [4, 6, 9],
+      comments: [],
+    },
+    {
+      id: 9,
+      image: require("../../../assets/images/blunk.png"),
+      username: "its_blunkkk",
+      likedBy: [1, 2, 3, 4, 5],
       comments: [],
     },
   ],
@@ -66,6 +94,12 @@ const postsReducer: Reducer<typeof initialState, any> = (
         posts: action.payload,
       };
     }
+    case "commentLiked": {
+      return {
+        ...state,
+        posts: action.payload,
+      };
+    }
     default:
       return state;
   }
@@ -80,6 +114,8 @@ const store = configureStore<ConfigureStore>({ reducer: rootReducer });
 
 export default store;
 
+/////////////////// ADDCOMMENT ///////////////////
+
 export const addComment =
   (postId: number, comment: AddCommentsState) =>
   (dispatch: Dispatch, getState: () => { posts: InitialState }) => {
@@ -91,6 +127,8 @@ export const addComment =
     });
     dispatch({ type: "setNewData/addComment", payload: newData });
   };
+
+/////////////////// DELETECOMMENT ///////////////////
 
 export const deleteComment =
   (postId: number, commentId: number) =>
@@ -108,5 +146,32 @@ export const deleteComment =
     dispatch({ type: "setNewData/deleteComment", payload: newData });
   };
 
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
+/////////////////// LIKECOMMENT ///////////////////
+
+export const likeComment =
+  (postId: number, commentId: number) =>
+  (dispatch: Dispatch, getState: () => { posts: InitialState }) => {
+    const newData = getState().posts.posts.map(post => {
+      if (post.id !== postId) return post;
+
+      const commentsUpdated = post.comments.map(comment => {
+        if (comment.id === commentId) {
+          return {
+            ...comment,
+            isLiked: !comment.isLiked,
+          };
+        } else {
+          return comment;
+        }
+      });
+
+      return {
+        ...post,
+        comments: commentsUpdated,
+      };
+    });
+    dispatch({ type: "commentLiked", payload: newData });
+  };
+
+// export type AppDispatch = typeof store.dispatch;
+// export type RootState = ReturnType<typeof store.getState>;

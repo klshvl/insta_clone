@@ -23,6 +23,7 @@ const AddComment = ({ commentImage, onFocus, post }: AddCommentProps) => {
   const [addComments, setAddComments] = useState<AddCommentsState>({
     id: Math.random(),
     addComment: "",
+    isLiked: false,
   });
 
   const dispatch = useAppDispatch();
@@ -36,11 +37,15 @@ const AddComment = ({ commentImage, onFocus, post }: AddCommentProps) => {
   const addCommentsHandler = () => {
     if (addComments.addComment === "") return;
     dispatch(addComment(post.id, addComments));
-    setAddComments({ id: Math.random(), addComment: "" });
+    setAddComments({ ...addComments, addComment: "" });
   };
 
   const onChangeText = (newComment: string) =>
-    setAddComments({ id: Math.random(), addComment: newComment });
+    setAddComments({
+      id: Math.random(),
+      addComment: newComment,
+      isLiked: false,
+    });
 
   return (
     <>

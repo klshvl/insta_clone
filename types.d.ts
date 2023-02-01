@@ -1,6 +1,7 @@
 interface AddCommentsState {
   id: number;
   addComment: string | undefined;
+  isLiked: boolean;
 }
 
 interface Post {

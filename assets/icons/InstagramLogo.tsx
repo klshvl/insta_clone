@@ -1,6 +1,6 @@
-import * as React from 'react';
-import Svg, {SvgProps, Path} from 'react-native-svg';
-import {memo} from 'react';
+import * as React from "react";
+import Svg, { SvgProps, Path } from "react-native-svg";
+import { memo } from "react";
 
 const SvgComponent = (props: SvgProps) => (
   <Svg width={139} height={50} viewBox="0 0 139 50" fill="none" {...props}>

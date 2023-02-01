@@ -3,7 +3,8 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { InitialState } from "@react-navigation/native";
 import { SavedPostsInitialState } from "../../store/savedPosts";
-import SavedPost from "./SavedPost";
+import SavedPost, { IMG_SIZE } from "./SavedPost";
+import { FlashList } from "@shopify/flash-list";
 
 const PostsSavedScreen = () => {
   const { posts } = useSelector(
@@ -18,11 +19,19 @@ const PostsSavedScreen = () => {
     id => posts.find(post => post.id === id)?.image,
   );
 
+  const savedPostHandler = ({ item, index }) => {
+    return <SavedPost img={item} index={index} />;
+  };
+
   return (
-    <View>
-      {images.map(img => (
-        <SavedPost key={Math.random()} img={img} />
-      ))}
+    <View style={styles.saved}>
+      <FlashList
+        data={images}
+        estimatedItemSize={IMG_SIZE}
+        renderItem={savedPostHandler}
+        showsVerticalScrollIndicator={false}
+        numColumns={3}
+      />
     </View>
   );
 };

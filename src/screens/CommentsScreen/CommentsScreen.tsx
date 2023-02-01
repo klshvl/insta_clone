@@ -29,7 +29,7 @@ const CommentsScreen = ({ route }: CommentsScreenProps) => {
             comments={comment}
             accountUsername={posts[0].username}
             accountUserImage={posts[0].image}
-            post={post}
+            postId={post.id}
           />
         );
       })}
