@@ -6,18 +6,12 @@ const PROFILE_SIZE = 70;
 const ADD_STORY_CIRCLE_SIZE = 32;
 
 export const styles = StyleSheet.create({
-  profilesContainer: {
-    alignItems: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 8,
-  },
   profileBorder: {
     width: PROFILE_BORDER_SIZE,
     height: PROFILE_BORDER_SIZE,
     borderRadius: PROFILE_BORDER_SIZE / 2,
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 10,
   },
   profileContainer: {
     backgroundColor: "white",

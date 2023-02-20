@@ -1,13 +1,8 @@
-import {
-  Dimensions,
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-} from "react-native";
+import { Dimensions, Image, StyleSheet } from "react-native";
 import React from "react";
 
 interface SavedPostProps {
-  img: ImageSourcePropType;
+  img: string | undefined;
   index: number;
 }
 
@@ -17,7 +12,7 @@ const SavedPost = ({ img, index }: SavedPostProps) => {
   return (
     <Image
       key={Math.random()}
-      source={img}
+      source={{ uri: img }}
       style={[styles.img, (index + 1) % 3 === 0 && styles.lastImg]}
     />
   );

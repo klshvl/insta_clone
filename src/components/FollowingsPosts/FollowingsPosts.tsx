@@ -1,21 +1,32 @@
-import React, { useCallback, useRef, useState } from "react";
-import { Platform, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Platform,
+  View,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  FlatList,
+} from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { useSelector } from "react-redux";
 
 import Post from "../Post";
+import { getPosts } from "../../store/posts";
 import StoryProfiles from "../StoryProfiles";
 import { useKeyboard } from "./useKeyboard";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 
 const FollowingsPosts = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>();
   const [viewHeight, setViewHeight] = useState<number>();
   const { keyboardHeight } = useKeyboard();
   const postRef = useRef<FlashList<Post>>(null);
+  const dispatch = useAppDispatch();
+  const styles = getStyles();
+  useEffect(() => {
+    dispatch(getPosts());
+  }, []);
 
-  const { posts } = useSelector(
-    (state: { posts: InitialState }) => state.posts,
-  );
+  const { posts } = useAppSelector(state => state.posts);
 
   const onFocus = useCallback((id: number) => {
     // let ke = keyboardHeight;
@@ -35,18 +46,19 @@ const FollowingsPosts = () => {
     }
   }, []);
 
-  const postsHandler = ({ item }: { item: Post }) => {
+  const postsHandler = ({ item, index }: { item: Post; index: number }) => {
     return (
-      <Post post={item} onFocus={() => posts.map(post => onFocus(post.id))} />
+      <Post
+        post={item}
+        onFocus={() => posts.map(() => onFocus(index))}
+        index={index}
+      />
     );
   };
 
   return (
     <View
-      style={[
-        getStyles().contentContainerStyle,
-        getStyles(keyboardHeight).keyboard,
-      ]}
+      style={[styles.contentContainerStyle, styles.keyboard(keyboardHeight)]}
       onLayout={e => {
         if (!viewHeight || e.nativeEvent.layout.height > viewHeight) {
           setViewHeight(e.nativeEvent.layout.height);
@@ -60,12 +72,12 @@ const FollowingsPosts = () => {
           });
         }
       }}>
-      <FlashList
+      <FlatList
         ref={postRef}
         ListHeaderComponent={<StoryProfiles posts={posts} />}
         data={posts}
         renderItem={postsHandler}
-        estimatedItemSize={630}
+        // estimatedItemSize={630}
         showsVerticalScrollIndicator={false}
       />
     </View>
@@ -74,15 +86,14 @@ const FollowingsPosts = () => {
 
 export default FollowingsPosts;
 
-import { StyleSheet } from "react-native";
-import { InitialState } from "../../store/posts";
-
-const getStyles = (keyboardHeight?: number) =>
+const getStyles = () =>
   StyleSheet.create({
     contentContainerStyle: {
       flex: 1,
     },
-    keyboard: {
+    keyboard: (
+      keyboardHeight?: number,
+    ): ViewStyle | TextStyle | ImageStyle => ({
       marginBottom: keyboardHeight ? keyboardHeight - 80 : 0,
-    },
+    }),
   });

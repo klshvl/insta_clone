@@ -1,24 +1,24 @@
 import React, { useMemo } from "react";
 import { StyleSheet, View } from "react-native";
-import { RootStackParamsList } from "../../navigation/HomeStackNavigation";
+import { RootStackParamsList } from "../../navigation/AfterAuth/HomeStackNavigation";
 import { RouteProp } from "@react-navigation/native";
-import { useSelector } from "react-redux";
 
 import Comment from "./Comment";
-import { InitialState } from "../../store/posts";
+import { useAppSelector } from "../../hooks";
 
 interface CommentsScreenProps {
   route: RouteProp<RootStackParamsList, "Comments">;
 }
 
 const CommentsScreen = ({ route }: CommentsScreenProps) => {
-  const { posts } = useSelector(
-    (state: { posts: InitialState }) => state.posts,
-  );
+  const { posts } = useAppSelector(state => state.posts);
+
   const post = useMemo(
-    () => posts.find(p => p.id === route.params.id),
+    () => posts.find(({ id }) => id === route.params.id),
     [posts, route.params],
   );
+
+  const { user } = useAppSelector(state => state.user);
 
   return (
     <View style={styles.comments}>
@@ -26,10 +26,10 @@ const CommentsScreen = ({ route }: CommentsScreenProps) => {
         return (
           <Comment
             key={Math.random()}
-            comments={comment}
-            accountUsername={posts[0].username}
-            accountUserImage={posts[0].image}
-            postId={post.id}
+            comment={comment}
+            accountUsername={user?.displayName}
+            accountUserImage={user?.photoURL}
+            post={post}
           />
         );
       })}

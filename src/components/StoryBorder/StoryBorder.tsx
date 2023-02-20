@@ -9,31 +9,43 @@ interface StoryBorderProps {
   item: Post;
   styleVariants: "profiles" | "post";
   children: React.ReactNode;
+  index: number;
 }
 
-const StoryBorder = ({ item, styleVariants, children }: StoryBorderProps) => {
-  const gradient = useMemo(
-    () =>
-      item.id === 1
-        ? ["#fff", "#fff"]
-        : [
-            "#C13584",
-            "#E1306C",
-            "#FD1D1D",
-            "#F56040",
-            "#F77737",
-            "#FCAF45",
-            "#FFDC80",
-          ],
-    [item],
-  );
+const gradient = [
+  "#C13584",
+  "#E1306C",
+  "#FD1D1D",
+  "#F56040",
+  "#F77737",
+  "#FCAF45",
+  "#FFDC80",
+];
+
+const StoryBorder = ({
+  item,
+  styleVariants,
+  children,
+  index,
+}: StoryBorderProps) => {
+  // const gradient = useMemo(
+  //   () =>
+  //     index === 0
+  //       ? ["#fff", "#fff"]
+  //       : [
+  //           "#C13584",
+  //           "#E1306C",
+  //           "#FD1D1D",
+  //           "#F56040",
+  //           "#F77737",
+  //           "#FCAF45",
+  //           "#FFDC80",
+  //         ],
+  //   [item],
+  // );
+
   return (
-    <View
-      style={
-        styleVariants === "profiles"
-          ? style1.profilesContainer
-          : style2.userInfo
-      }>
+    <View style={style2.userInfo}>
       <LinearGradient
         colors={gradient}
         style={
@@ -50,9 +62,9 @@ const StoryBorder = ({ item, styleVariants, children }: StoryBorderProps) => {
           {children}
         </View>
       </LinearGradient>
-      <Text style={styleVariants === "profiles" ? null : style2.username}>
+      {/* <Text style={styleVariants === "profiles" ? null : style2.username}>
         {item.username}
-      </Text>
+      </Text> */}
     </View>
   );
 };

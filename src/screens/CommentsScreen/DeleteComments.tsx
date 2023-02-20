@@ -7,7 +7,7 @@ interface DeleteCommentsProps {
   onPress: () => void;
 }
 
-const DeleteComments = ({ onPress }: DeleteCommentsProps) => {
+const DeleteCommentsButton = ({ onPress }: DeleteCommentsProps) => {
   return (
     <Button onPress={onPress} style={styles.deleteOnSwipe}>
       <Icon name="trash-outline" width={28} height={28} fill={"white"} />
@@ -15,7 +15,7 @@ const DeleteComments = ({ onPress }: DeleteCommentsProps) => {
   );
 };
 
-export default DeleteComments;
+export default DeleteCommentsButton;
 
 const styles = StyleSheet.create({
   deleteOnSwipe: {

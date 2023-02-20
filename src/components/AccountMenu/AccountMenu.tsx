@@ -11,6 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 
 import Button from "../Button";
 import AccountMenuList from "./AccountMenuList";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { AccountStackParamsList } from "../../navigation/AfterAuth/AccountStackNavigation";
 
 type AccountScreenMenuProps = {
   isVisible: boolean;
@@ -22,18 +24,6 @@ export type AccountMenuRefProps = {
 
 const { height } = Dimensions.get("window");
 export const MAX_TRANSLATE_Y = -height * 0.78;
-
-const LIST = [
-  { iconName: "settings-2-outline", title: "Settings" },
-  { iconName: "clock-outline", title: "Your activity" },
-  { iconName: "archive-outline", title: "Archive" },
-  { iconName: "grid-outline", title: "QR code" },
-  { iconName: "bookmark-outline", title: "Saved" },
-  { iconName: "checkmark-square-outline", title: "Digital collectibles" },
-  { iconName: "list-outline", title: "Close friends" },
-  { iconName: "star-outline", title: "Favourites" },
-  { iconName: "activity-outline", title: "COVID-19 Information Center" },
-];
 
 const AccountScreenMenu = React.forwardRef<
   AccountMenuRefProps,
@@ -54,12 +44,10 @@ const AccountScreenMenu = React.forwardRef<
 
   const gesture = Gesture.Pan()
     .onStart(() => (context.value = { y: translateY.value }))
-    .onUpdate(
-      event => (
-        (translateY.value = event.translationY + context.value.y),
-        (translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y))
-      ),
-    )
+    .onUpdate(event => {
+      translateY.value = event.translationY + context.value.y;
+      translateY.value = Math.max(translateY.value, MAX_TRANSLATE_Y);
+    })
     .onEnd(() => {
       if (-translateY.value > height / 4) {
         scrollTo(MAX_TRANSLATE_Y);
@@ -79,15 +67,12 @@ const AccountScreenMenu = React.forwardRef<
     };
   });
 
-  const navigation = useNavigation<any>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AccountStackParamsList>>();
 
-  const listPressHandler = () => {
-    LIST.forEach(list => {
-      if (list.iconName === "bookmark-outline") {
-        navigation.navigate("Saved");
-        onPress();
-      }
-    });
+  const savedPressHandler = () => {
+    navigation.navigate("Saved");
+    onPress();
   };
 
   return (
@@ -98,14 +83,25 @@ const AccountScreenMenu = React.forwardRef<
       <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.menuContainer, rAccountMenuStyle]}>
           <View style={styles.bar} />
-          {LIST.map(list => (
-            <AccountMenuList
-              key={Math.random()}
-              name={list.iconName}
-              title={list.title}
-              onPress={listPressHandler}
-            />
-          ))}
+          <AccountMenuList name="settings-2-outline" title="Settings" />
+          <AccountMenuList name="clock-outline" title="Your activity" />
+          <AccountMenuList name="archive-outline" title="Archive" />
+          <AccountMenuList name="grid-outline" title="QR code" />
+          <AccountMenuList
+            name="bookmark-outline"
+            title="Saved"
+            onPress={savedPressHandler}
+          />
+          <AccountMenuList
+            name="checkmark-square-outline"
+            title="Digital collectibles"
+          />
+          <AccountMenuList name="list-outline" title="Close friends" />
+          <AccountMenuList name="star-outline" title="Favourites" />
+          <AccountMenuList
+            name="activity-outline"
+            title="COVID-19 Information Center"
+          />
         </Animated.View>
       </GestureDetector>
     </Modal>

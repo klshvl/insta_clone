@@ -1,5 +1,6 @@
 export { default as AccountMenu } from "./AccountMenu";
 export { default as Button } from "./Button";
+export { default as ErrorMessage } from "./ErrorMessage";
 export { default as FollowingsPosts } from "./FollowingsPosts";
 export { default as Header } from "./Header";
 export { default as ItemSeparator } from "./ItemSeparator";
@@ -8,3 +9,4 @@ export { default as PostFooter } from "./PostFooter";
 export { default as StoryBorder } from "./StoryBorder";
 export { default as StoryProfile } from "./StoryProfile";
 export { default as StoryProfiles } from "./StoryProfiles";
+export { default as UserStory } from "./UserStory";

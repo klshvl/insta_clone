@@ -9,7 +9,6 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch, useSelector } from "react-redux";
 
 import { styles } from "./styles";
 import { ICONS_SIZE } from "../Header/Header";
@@ -17,12 +16,10 @@ import LikersProfileImages from "./LikersProfileImages";
 import LikesText from "./LikesText";
 import AddComment from "./AddComment";
 import Button from "../Button";
-import { Source } from "react-native-fast-image";
-import { InitialState } from "../../store/posts";
-import {
-  SavedPostsInitialState,
-  removeSavedPost,
-} from "../../store/savedPosts";
+import { removeSavedPost } from "../../store/savedPosts";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamsList } from "../../navigation/AfterAuth/HomeStackNavigation";
+import { useAppSelector, useAppDispatch } from "../../hooks";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
@@ -34,21 +31,20 @@ interface PostFooterProps {
 }
 
 const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
-  const { posts } = useSelector(
-    (state: { posts: InitialState }) => state.posts,
-  );
+  const { posts } = useAppSelector(state => state.posts);
 
-  const { savedPostsIds } = useSelector(
-    (state: { savedPosts: SavedPostsInitialState }) => state.savedPosts,
-  );
+  const { savedPostsIds } = useAppSelector(state => state.savedPosts);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const navigation = useNavigation<any>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
   const [usersThatLiked, setUsersThatLiked] = useState<
     Array<string | undefined>
   >([]);
+
+  //////////////// POST LIKE ANIMATION ////////////////
 
   const scale = useSharedValue(1);
   const rIconStyle = useAnimatedStyle(() => {
@@ -62,7 +58,7 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
   });
 
   const postIsLiked = () => {
-    onLiked(!isLiked);
+    onLiked(prevLike => !prevLike);
   };
 
   const singleTap = Gesture.Tap().onStart(() => {
@@ -72,18 +68,22 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
     });
   });
 
+  //////////////// POST LIKERS ////////////////
+
   const postLikes = useCallback(() => {
     let likes: Array<string | undefined> = [];
 
-    post.likedBy.forEach(postId => {
-      likes.push(posts.find((postU: Post) => postU.id === postId)?.username);
+    post.likedBy.forEach(likeObj => {
+      likes.push(
+        posts.find((postU: Post) => postU.userId === likeObj.userId)?.username,
+      );
     });
     setUsersThatLiked(likes);
   }, [post.likedBy, posts]);
 
   const postLikesUsers = useCallback(
     (usernames: Array<string | undefined>) => {
-      const userImages: Array<number | Source | undefined> = [];
+      const userImages: Array<string | undefined> = [];
       usernames.map(username => {
         userImages.push(
           posts.find((postI: Post) => postI.username === username)?.image,
@@ -106,6 +106,8 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
   useEffect(() => {
     postLikes();
   }, [postLikes]);
+
+  //////////////// SAVE POST ////////////////
 
   const savePostHandler = () => {
     if (!savedPostsIds.includes(post.id)) {
@@ -169,7 +171,7 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
         {postLikesUsers(usersThatLiked)}
         <LikesText likeNum={2} usersThatLiked={usersThatLiked} />
       </View>
-      <AddComment post={post} commentImage={posts[0].image} onFocus={onFocus} />
+      <AddComment post={post} onFocus={onFocus} />
     </View>
   );
 };

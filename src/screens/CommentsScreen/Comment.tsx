@@ -1,5 +1,5 @@
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
 import { Icon } from "react-native-eva-icons";
 import Animated, {
   runOnJS,
@@ -8,31 +8,32 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Image, { Source } from "react-native-fast-image";
+import Image from "react-native-fast-image";
 import Swipeable from "react-native-gesture-handler/Swipeable";
-import DeleteComments from "./DeleteComments";
+import firestore from "@react-native-firebase/firestore";
 
-import { deleteComment, likeComment } from "../../store/posts";
+import DeleteCommentsButton from "./DeleteComments";
+import { getPosts } from "../../store/posts";
 import { useAppDispatch } from "../../hooks";
 
 interface CommentProps {
-  // comment: string;
-  comments: AddCommentsState;
-  accountUsername: string;
-  accountUserImage: number | Source | undefined;
-  postId: number;
+  comment: AddCommentsState;
+  accountUsername: string | undefined;
+  accountUserImage: string | undefined;
+  post: any;
 }
 
 const Comment = ({
-  comments,
+  comment,
   accountUsername,
   accountUserImage,
-  postId,
+  post,
 }: CommentProps) => {
-  const scale = useSharedValue(1);
-  // const [liked, setLiked] = useState<boolean>(false);
-
   const dispatch = useAppDispatch();
+
+  /////////////////// LIKE COMMENT ANIMATION ///////////////////
+
+  const scale = useSharedValue(1);
 
   const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
@@ -46,8 +47,18 @@ const Comment = ({
     };
   });
 
-  const commentWasLiked = () => {
-    dispatch(likeComment(postId, comments.id));
+  const commentWasLiked = async () => {
+    const commentObj = await firestore()
+      .collection("comments")
+      .doc(comment.id.toString())
+      .get();
+
+    await firestore()
+      .collection("comments")
+      .doc(comment.id)
+      .update({ commentLiked: !commentObj._data.commentLiked });
+
+    dispatch(getPosts());
   };
 
   const tapHandler = Gesture.Tap().onStart(() => {
@@ -57,19 +68,33 @@ const Comment = ({
     });
   });
 
-  const deleteComments = () => {
-    dispatch(deleteComment(postId, comments.id));
+  /////////////////// DELETE COMMENT ///////////////////
+
+  const deleteComments = async () => {
+    const commentObj = firestore()
+      .collection("comments")
+      .doc(comment.id.toString());
+
+    await firestore()
+      .collection("posts")
+      .doc(post.id.toString())
+      .update({
+        comments: firestore.FieldValue.arrayRemove(commentObj),
+      });
+
+    commentObj.delete();
+    dispatch(getPosts());
   };
 
   const renderRightActions = () => {
-    return <DeleteComments onPress={deleteComments} />;
+    return <DeleteCommentsButton onPress={deleteComments} />;
   };
 
   return (
     <Swipeable renderRightActions={renderRightActions}>
       <View key={Math.random()} style={styles.container}>
         <View style={styles.info}>
-          <Image source={accountUserImage} style={styles.profileImg} />
+          <Image source={{ uri: accountUserImage }} style={styles.profileImg} />
           <View>
             <Text style={styles.username}>{accountUsername}</Text>
             <View style={styles.time}>
@@ -77,10 +102,10 @@ const Comment = ({
               <Text style={styles.reply}>Reply</Text>
             </View>
           </View>
-          <Text style={styles.comment}>{comments?.addComment}</Text>
+          <Text style={styles.comment}>{comment.content}</Text>
         </View>
         <GestureDetector gesture={tapHandler}>
-          {comments?.isLiked ? (
+          {comment.commentLiked ? (
             <AnimatedIcon
               name="heart"
               width={16}

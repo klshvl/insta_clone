@@ -1,32 +1,29 @@
 import React from "react";
 
 import StoryBorder from "../StoryBorder";
-import { Image, View } from "react-native";
+import { Image, Text, View } from "react-native";
 import { styles } from "./styles";
-import { Icon } from "react-native-eva-icons";
 
 interface StoryProfileProps {
-  item: Post;
+  // item: Post;
+  index: number;
+  item: any;
 }
 
-const StoryProfile = ({ item }: StoryProfileProps) => {
+const StoryProfile = ({ item, index }: StoryProfileProps) => {
   return (
-    <>
-      <StoryBorder item={item} styleVariants="profiles">
-        <Image source={item.image} style={styles.profile} />
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        marginRight: 8,
+      }}>
+      <StoryBorder item={item} styleVariants="profiles" index={index}>
+        <Image source={{ uri: item.image }} style={styles.profile} />
       </StoryBorder>
-      {item.id === 1 && (
-        <View style={styles.addStoryCircle}>
-          <Icon
-            name="plus-outline"
-            width={16}
-            height={16}
-            fill="white"
-            stroke="white"
-          />
-        </View>
-      )}
-    </>
+      <Text>{item.username}</Text>
+    </View>
   );
 };
 

@@ -3,7 +3,7 @@ import { Pressable, PressableProps, Text, TextStyle } from "react-native";
 
 type ButtonProps = PressableProps & {
   children: React.ReactNode | string;
-  textStyle?: TextStyle;
+  textStyle?: TextStyle | TextStyle[];
 };
 
 const Button: React.FC<ButtonProps> = ({ textStyle, children, ...props }) => {

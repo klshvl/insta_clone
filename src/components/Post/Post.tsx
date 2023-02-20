@@ -19,10 +19,13 @@ import { styles } from "./styles";
 interface PostsProps {
   post: Post;
   onFocus: () => void;
+  index: number;
 }
 
-const Post = ({ post, onFocus }: PostsProps) => {
+const Post = ({ post, onFocus, index }: PostsProps) => {
   const [isLiked, setIsLiked] = useState(false);
+
+  //////////////// POST LIKE ANIMATION ////////////////
 
   const scale = useSharedValue(0);
 
@@ -54,8 +57,8 @@ const Post = ({ post, onFocus }: PostsProps) => {
   return (
     <View style={styles.postContainer}>
       <View style={styles.postHeader}>
-        <StoryBorder item={post} styleVariants="post">
-          <Image source={post.image} style={styles.profile} />
+        <StoryBorder item={post} styleVariants="post" index={index}>
+          <Image source={{ uri: post.image }} style={styles.profile} />
         </StoryBorder>
         <Icon
           name="more-horizontal-outline"
@@ -65,7 +68,9 @@ const Post = ({ post, onFocus }: PostsProps) => {
       </View>
       <GestureDetector gesture={doubleTap}>
         <View>
-          <ImageBackground source={post.image} style={[styles.postImage]}>
+          <ImageBackground
+            source={{ uri: post.image }}
+            style={[styles.postImage]}>
             <Animated.Image
               source={require("../../../assets/images/whiteHeart.png")}
               style={[styles.heartImage, rImageStyle]}

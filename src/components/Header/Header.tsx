@@ -12,12 +12,13 @@ const ARROW_SIZE = 24;
 export const ICONS_SIZE = 32;
 
 interface HeaderProps {
-  header?: string;
+  header?: string | undefined;
   names: string[];
   onPress?: () => void;
+  style?: any;
 }
 
-const Header = ({ header, names, onPress }: HeaderProps) => {
+const Header = ({ header, names, onPress, style }: HeaderProps) => {
   const navigation = useNavigation<any>();
 
   const iconPressHandler = () => {
@@ -28,12 +29,14 @@ const Header = ({ header, names, onPress }: HeaderProps) => {
   };
 
   return (
-    <SafeAreaView edges={["top", "left", "right"]} style={styles.rootContainer}>
+    <SafeAreaView
+      edges={["top", "left", "right"]}
+      style={[styles.rootContainer, style]}>
       <View style={styles.iconsContainer}>
         {header ? (
           <Text style={styles.header}>{header}</Text>
         ) : (
-          <InstagramLogo />
+          <InstagramLogo width={139} height={50} />
         )}
         <Icon
           name="arrow-ios-downward-outline"
@@ -42,26 +45,6 @@ const Header = ({ header, names, onPress }: HeaderProps) => {
         />
       </View>
       <View style={styles.iconsContainer}>
-        {/* <Icon
-          name="plus-square-outline"
-          width={ICONS_SIZE}
-          height={ICONS_SIZE}
-          style={styles.icon}
-        />
-        <Icon
-          name="heart-outline"
-          width={ICONS_SIZE}
-          height={ICONS_SIZE}
-          style={styles.icon}
-        />
-        <Button onPress={() => navigation.navigate("Messages")}>
-          <Icon
-            name="paper-plane-outline"
-            width={ICONS_SIZE}
-            height={ICONS_SIZE}
-            style={styles.icon}
-          />
-        </Button> */}
         {names.map(name => (
           <Button onPress={iconPressHandler} key={Math.random()}>
             <Icon

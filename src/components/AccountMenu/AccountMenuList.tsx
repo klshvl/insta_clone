@@ -8,7 +8,7 @@ import Button from "../Button";
 interface AccountMenuListProps {
   name: string;
   title: string;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 const AccountMenuList = ({ name, title, onPress }: AccountMenuListProps) => {

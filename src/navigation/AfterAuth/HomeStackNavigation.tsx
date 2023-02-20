@@ -1,11 +1,10 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { CommentsScreen, HomeScreen, MessagesScreen } from "../screens";
+import { CommentsScreen, HomeScreen, MessagesScreen } from "../../screens";
 import { Icon } from "react-native-eva-icons";
 
 export type RootStackParamsList = {
   Home: undefined;
-  // Comments: string[];
   Comments: Post;
   Messages: undefined;
 };

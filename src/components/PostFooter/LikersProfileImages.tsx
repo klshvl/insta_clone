@@ -1,16 +1,16 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import Image, { Source } from "react-native-fast-image";
+import Image from "react-native-fast-image";
 
 interface Props {
-  imgSource: number | Source | undefined;
+  imgSource: string | undefined;
   index: number;
 }
 
 const LikersProfileImages = ({ imgSource, index }: Props) => {
   return (
     <View style={getStyles(index).container}>
-      <Image source={imgSource} style={getStyles(index).image} />
+      <Image source={{ uri: imgSource }} style={getStyles(index).image} />
     </View>
   );
 };

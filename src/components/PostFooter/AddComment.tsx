@@ -1,51 +1,53 @@
 import React, { useState } from "react";
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  TextInput,
-  View,
-} from "react-native";
+import { Image, StyleSheet, TextInput, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import Button from "../Button/Button";
-import { addComment } from "../../store/posts";
-import { useAppDispatch } from "../../hooks";
+import { getPosts } from "../../store/posts";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import firestore from "@react-native-firebase/firestore";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamsList } from "../../navigation/AfterAuth/HomeStackNavigation";
 
 interface AddCommentProps {
   post: Post;
-  commentImage: ImageSourcePropType;
   onFocus: () => void;
 }
 
-const AddComment = ({ commentImage, onFocus, post }: AddCommentProps) => {
-  // const [addComments, setAddComments] = useState<string | undefined>("");
-  const [addComments, setAddComments] = useState<AddCommentsState>({
-    id: Math.random(),
-    addComment: "",
-    isLiked: false,
-  });
+const AddComment = ({ onFocus, post }: AddCommentProps) => {
+  const [newComment, setNewComment] = useState("");
 
   const dispatch = useAppDispatch();
 
-  const navigation = useNavigation<any>();
+  const { user } = useAppSelector(state => state.user);
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
   const commentsHandler = () => {
     navigation.navigate("Comments", post);
   };
 
-  const addCommentsHandler = () => {
-    if (addComments.addComment === "") return;
-    dispatch(addComment(post.id, addComments));
-    setAddComments({ ...addComments, addComment: "" });
+  const addCommentsHandler = async () => {
+    if (newComment === "") return;
+    const commentObj = await firestore()
+      .collection("comments")
+      .add({ content: newComment, commentLiked: false });
+
+    await firestore()
+      .collection("posts")
+      .doc(post.id.toString())
+      .update({
+        comments: firestore.FieldValue.arrayUnion(commentObj),
+      });
+
+    dispatch(getPosts());
+    setNewComment("");
   };
 
-  const onChangeText = (newComment: string) =>
-    setAddComments({
-      id: Math.random(),
-      addComment: newComment,
-      isLiked: false,
-    });
+  const onChangeText = (comment: string) => {
+    setNewComment(comment);
+  };
 
   return (
     <>
@@ -62,12 +64,19 @@ const AddComment = ({ commentImage, onFocus, post }: AddCommentProps) => {
             ? [styles.addComment, styles.addCommentMargin]
             : styles.addComment
         }>
-        <Image source={commentImage} style={styles.image} />
+        <Image
+          source={
+            user?.photoURL
+              ? { uri: user.photoURL }
+              : require("../../../assets/images/defaultProfile.svg.png")
+          }
+          style={styles.image}
+        />
         <View style={styles.commentsInput}>
           <TextInput
             onFocus={onFocus}
             placeholder="Add a comment..."
-            defaultValue={addComments.addComment}
+            defaultValue={newComment}
             onChangeText={onChangeText}
           />
           <Button textStyle={styles.postComment} onPress={addCommentsHandler}>

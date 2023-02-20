@@ -17,6 +17,8 @@ export const styles = StyleSheet.create({
   userInfo: {
     flexDirection: "row",
     alignItems: "center",
+
+    marginBottom: 4,
   },
   profileBorder: {
     width: PROFILE_BORDER_SIZE,

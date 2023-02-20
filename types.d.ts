@@ -1,15 +1,15 @@
 interface AddCommentsState {
-  id: number;
-  addComment: string | undefined;
-  isLiked: boolean;
+  id: string;
+  content: string;
+  commentLiked: boolean;
 }
 
 interface Post {
-  id: number;
-  image: ImageSourcePropType;
+  id: string;
+  userId: number;
+  image: string | undefined;
   username: string;
   likedBy: number[];
-  // comments: Array<string | undefined>;
   comments: AddCommentsState[];
 }
 

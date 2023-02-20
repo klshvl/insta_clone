@@ -1,15 +1,15 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { AccountScreen, PostsSavedScreen } from "../screens";
+import { AccountScreen, PostsSavedScreen } from "../../screens";
 
 export type AccountStackParamsList = {
   Account: undefined;
   Saved: undefined;
 };
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<AccountStackParamsList>();
 
-const AccountStackNavigation = (props: AccountStackParamsList) => {
+const AccountStackNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
