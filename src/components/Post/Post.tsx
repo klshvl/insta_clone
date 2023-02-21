@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, ImageBackground, View } from "react-native";
+import { Image, ImageBackground, Text, View } from "react-native";
 import { Icon } from "react-native-eva-icons";
 
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
@@ -57,9 +57,12 @@ const Post = ({ post, onFocus, index }: PostsProps) => {
   return (
     <View style={styles.postContainer}>
       <View style={styles.postHeader}>
-        <StoryBorder item={post} styleVariants="post" index={index}>
-          <Image source={{ uri: post.image }} style={styles.profile} />
-        </StoryBorder>
+        <View style={styles.info}>
+          <StoryBorder item={post} styleVariants="post" index={index}>
+            <Image source={{ uri: post.image }} style={styles.profile} />
+          </StoryBorder>
+          <Text style={styles.username}>{post.username}</Text>
+        </View>
         <Icon
           name="more-horizontal-outline"
           width={ICONS_SIZE}

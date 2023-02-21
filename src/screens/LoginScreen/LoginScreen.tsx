@@ -36,7 +36,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const loginPressHandler = async ({ email, password }: Values) => {
     await auth().signInWithEmailAndPassword(email, password);
 
-    const user = auth().currentUser?.toJSON();
+    const userCredentials = auth().currentUser?.toJSON();
+    const user = { ...userCredentials, savedPosts: [] };
     dispatch({ type: "user", payload: user });
   };
 

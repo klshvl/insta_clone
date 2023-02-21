@@ -1,8 +1,8 @@
 import { StyleSheet } from "react-native";
 
-const PROFILE_IMAGE_SIZE = 40;
-const PROFILE_BORDER_SIZE = 50;
-const PROFILE_CONTAINER_SIZE = 45;
+const PROFILE_IMAGE_SIZE = 32;
+const PROFILE_BORDER_SIZE = 40;
+const PROFILE_CONTAINER_SIZE = 36;
 
 export const styles = StyleSheet.create({
   postContainer: {
@@ -14,10 +14,13 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
   },
+  info: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   userInfo: {
     flexDirection: "row",
     alignItems: "center",
-
     marginBottom: 4,
   },
   profileBorder: {
@@ -42,8 +45,9 @@ export const styles = StyleSheet.create({
     borderRadius: PROFILE_IMAGE_SIZE / 2,
   },
   username: {
-    fontWeight: "bold",
-    fontSize: 16,
+    fontWeight: "600",
+    fontSize: 13,
+    lineHeight: 18,
   },
   postImage: {
     width: "100%",

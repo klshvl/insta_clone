@@ -1,21 +1,28 @@
 import { StyleSheet, View } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import SavedPost, { IMG_SIZE } from "./SavedPost";
 import { FlashList } from "@shopify/flash-list";
-import { useAppSelector } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { getSavedPosts } from "../../store/user";
 
 const PostsSavedScreen = () => {
   const { posts } = useAppSelector(state => state.posts);
 
-  const { savedPostsIds } = useAppSelector(state => state.savedPosts);
+  const { user } = useAppSelector(state => state.user);
 
-  const images = savedPostsIds.map(
-    id => posts.find(post => post.id === id)?.image,
+  const images = user?.savedPosts.map(
+    savedPost => posts.find(post => post.id === savedPost.postId)?.image,
   );
 
   const savedPostHandler = ({ item, index }) => {
     return <SavedPost img={item} index={index} />;
   };
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getSavedPosts());
+  }, []);
 
   return (
     <View style={styles.saved}>

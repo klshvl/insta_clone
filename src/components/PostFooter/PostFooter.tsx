@@ -16,10 +16,11 @@ import LikersProfileImages from "./LikersProfileImages";
 import LikesText from "./LikesText";
 import AddComment from "./AddComment";
 import Button from "../Button";
-import { removeSavedPost } from "../../store/savedPosts";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamsList } from "../../navigation/AfterAuth/HomeStackNavigation";
 import { useAppSelector, useAppDispatch } from "../../hooks";
+import firestore from "@react-native-firebase/firestore";
+import { getSavedPosts } from "../../store/user";
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
 
@@ -32,8 +33,7 @@ interface PostFooterProps {
 
 const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
   const { posts } = useAppSelector(state => state.posts);
-
-  const { savedPostsIds } = useAppSelector(state => state.savedPosts);
+  const { user } = useAppSelector(state => state.user);
 
   const dispatch = useAppDispatch();
 
@@ -109,14 +109,25 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
 
   //////////////// SAVE POST ////////////////
 
-  const savePostHandler = () => {
-    if (!savedPostsIds.includes(post.id)) {
-      dispatch({ type: "save", payload: post.id });
+  const savePostHandler = async () => {
+    const savedPostsCollection = firestore().collection("savedPosts");
+
+    const savedPost = user?.savedPosts.find(
+      savedP => savedP.postId === post.id,
+    );
+
+    if (!savedPost) {
+      await savedPostsCollection.add({ postId: post.id });
     } else {
-      dispatch(removeSavedPost(post.id));
+      await savedPostsCollection.doc(savedPost.id).delete();
     }
+
+    dispatch(getSavedPosts());
   };
-  const postSaved = savedPostsIds.find(id => id === post.id);
+
+  const postWasSaved = user?.savedPosts.find(
+    savedP => savedP.postId === post.id,
+  );
 
   return (
     <View style={styles.postInteractionContainer}>
@@ -156,7 +167,7 @@ const PostFooter = ({ isLiked, onLiked, post, onFocus }: PostFooterProps) => {
           />
         </View>
         <Button onPress={savePostHandler}>
-          {postSaved ? (
+          {postWasSaved ? (
             <Icon name="bookmark" width={ICONS_SIZE} height={ICONS_SIZE} />
           ) : (
             <Icon

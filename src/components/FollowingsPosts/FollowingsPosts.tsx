@@ -22,6 +22,7 @@ const FollowingsPosts = () => {
   const postRef = useRef<FlashList<Post>>(null);
   const dispatch = useAppDispatch();
   const styles = getStyles();
+
   useEffect(() => {
     dispatch(getPosts());
   }, []);
